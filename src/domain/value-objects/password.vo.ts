@@ -24,7 +24,7 @@ export class Password extends ValueObject<string>{
     }
 
     async comparePasswords(password: string): Promise<boolean> {
-        return bcrypt.compare(password, this.password);
+        return bcrypt.compare(this.value, password);
     }
 
     equals(other: Password): boolean {

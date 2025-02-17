@@ -12,16 +12,19 @@ import { UserDocument } from "src/user/user.model";
 import { UserNotFoundException } from "src/domain/exceptions/client/user-not-found.exception";
 import { PasswordDontMatchException } from "src/domain/exceptions/client/passwords-dont-match.exception";
 import { ValidateUserDto } from "src/auth/dto/validate-user.dto";
+import { SnsService } from "src/aws/sns.service";
+import { generateVerificationCode } from "src/system/constants/utilz-functions";
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly tokenService: TokenService,
+        private readonly snsService: SnsService
     ) {}
 
     async registration(registrationDto: CreateUserDto): Promise<AuthorizationResponseDto> {
-        const { email, phoneNumber, password } = registrationDto;
+        const { email, name, phoneNumber, password } = registrationDto;
 
         const userExistsByEmail = await this.userService.getUseByEmail(email);
         if (userExistsByEmail) {
@@ -33,12 +36,21 @@ export class AuthService {
 
         const user = await this.userService.createUser({
             email: new Email(email).getValue(),
+            name,
             phoneNumber: new PhoneNumber(phoneNumber).getValue(),
             password: hashedPassword,
         });
 
         const { id } = user;
-        const token = await this.tokenService.generateToken({ id, hashedPassword, ...user });
+        const token = await this.tokenService.generateToken({
+            id,
+            email,
+            hashedPassword: password,
+            phoneNumber: user.phoneNumber,
+            name
+        });
+        await this.snsService.publishMessage({ message: `Your verification code: ${generateVerificationCode()}`, phoneNumber });
+
         return { token };
     }
 
@@ -47,7 +59,19 @@ export class AuthService {
         const user = await this.validateUser({ email, password });
 
         const { id } = user;
-        const token = await this.tokenService.generateToken({ id, hashedPassword: password, ...user });
+        const token = await this.tokenService.generateToken({
+            id,
+            email,
+            hashedPassword: password,
+            phoneNumber: user.phoneNumber,
+            name: user.name
+        });
+
+        await this.snsService.publishMessage({
+            message: `Your verification code: ${generateVerificationCode()}`,
+            phoneNumber: user.phoneNumber
+        });
+
         return { token };
     }
 

@@ -20,7 +20,7 @@ export class UserService {
     }
 
     async getUserById(id: string): Promise<UserDocument> {
-        const user = await this.userModel.findOne({ where: { id } });
+        const user = await this.userModel.findOne({ id });
         if (!user) {
             throw new NotFoundException("User not found");
         }
@@ -28,6 +28,8 @@ export class UserService {
     }
 
     async getUseByEmail(email: string): Promise<UserDocument | null> {
-        return this.userModel.findOne({ where: { email }});
+        const user = await this.userModel.findOne({ email });
+        console.log("USER: ", user);
+        return user;
     }
 }

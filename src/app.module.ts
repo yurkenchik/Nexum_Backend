@@ -6,10 +6,17 @@ import { AppService } from "src/app.service";
 import { AppController } from "src/app.controller";
 import { UserModule } from "src/user/user.module";
 import { AuthModule } from "src/auth/auth.module";
+import { RedisModule } from "src/redis/redis.module";
+import { PokerSessionModule } from "src/poker-session/poker-session.module";
+import { APP_GUARD } from "@nestjs/core";
+import { WsAuthGuard } from "src/system/guards/ws-auth.guard";
 
 @Module({
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule.forRoot({
+            isGlobal: true,
+            envFilePath: `.env.${process.env.NODE_ENV}`,
+        }),
         JwtModule,
         MongooseModule.forRootAsync({
             imports: [ConfigModule],
@@ -19,9 +26,17 @@ import { AuthModule } from "src/auth/auth.module";
             })
         }),
         UserModule,
-        AuthModule
+        AuthModule,
+        RedisModule,
+        PokerSessionModule
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: WsAuthGuard
+        }
+    ],
 })
 export class AppModule {}

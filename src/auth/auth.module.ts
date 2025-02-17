@@ -5,11 +5,12 @@ import { TokenService } from "src/auth/token.service";
 import { AuthController } from "src/auth/auth.controller";
 import { UserModule } from "src/user/user.module";
 import { JwtModule } from "@nestjs/jwt";
+import { AwsModule } from "src/aws/aws.module";
 
 @Module({
     providers: [AuthService, TokenService],
     controllers: [AuthController],
-    imports: [JwtModule, ConfigModule, UserModule],
+    imports: [JwtModule, ConfigModule, UserModule, AwsModule],
     exports: [AuthService],
 })
 export class AuthModule {}
