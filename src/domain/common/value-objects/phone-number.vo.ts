@@ -1,5 +1,5 @@
-import { ValueObject } from "src/domain/common-instances/value-object.instance";
-import { InvalidPhoneNumberException } from "src/domain/exceptions/client/invalid-phone-number.exception";
+import { ValueObject } from "src/Domain/common-instances/value-object.instance";
+import { InvalidPhoneNumberException } from "src/Domain/exceptions/client/invalid-phone-number.exception";
 
 export class PhoneNumber extends ValueObject<string> {
     constructor(phoneNumber: string) {

@@ -7,13 +7,13 @@ import {
     WebSocketServer
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
-import { RedisService } from "src/redis/redis.service";
-import { PokerSessionEvents } from "src/system/enums/poker-session-events.enum";
-import { GAME_QUEUE } from "src/system/constants/utils";
+import { RedisService } from "src/infrastructure/redis/redis.service";
+import { PokerSessionEvents } from "src/presentation/enums/poker-session-events.enum";
+import { GAME_QUEUE } from "src/domain/common/constants/utils";
 import { JoinGameQueueDto } from "src/poker-session/dto/join-game-queue.dto";
-import { SocketAuthMiddleware } from "src/system/middlewares/ws.middleware";
+import { SocketAuthMiddleware } from "src/presentation/middlewares/ws.middleware";
 import { PlayerDto } from "src/poker-session/dto/player.dto";
-import { AuthenticatedSocket } from "src/poker-session/dto/authenticated-socket";
+import { AuthenticatedSocketDto } from "src/poker-session/dto/authenticated-socket.dto";
 
 @WebSocketGateway({ cors: { origin: "*" } })
 export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -24,7 +24,7 @@ export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDiscon
         private readonly redisService: RedisService,
     ) {}
 
-    afterInit(@ConnectedSocket() client: AuthenticatedSocket) {
+    afterInit(@ConnectedSocket() client: AuthenticatedSocketDto) {
         client.use(SocketAuthMiddleware() as any);
     }
 
@@ -32,18 +32,18 @@ export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDiscon
         await this.redisService.delete(GAME_QUEUE);
     }
 
-    async handleConnection(@ConnectedSocket() client: AuthenticatedSocket) {
+    async handleConnection(@ConnectedSocket() client: AuthenticatedSocketDto) {
         client.broadcast.emit(PokerSessionEvents.PLAYER_CONNECTED, { message: `Player with ID ${client.id} connected` });
     }
 
-    async handleDisconnect(@ConnectedSocket() client: AuthenticatedSocket) {
+    async handleDisconnect(@ConnectedSocket() client: AuthenticatedSocketDto) {
         this.server.emit(PokerSessionEvents.PLAYER_DISCONNECTED, { message: `Player with ID ${client.id} disconnected` });
         await this.redisService.removeFromQueue(GAME_QUEUE, client.id);
     }
 
     @SubscribeMessage("join-game-queue")
     async handleJoinGameQueue(
-        @ConnectedSocket() client: AuthenticatedSocket,
+        @ConnectedSocket() client: AuthenticatedSocketDto,
         @MessageBody() joinGameQueueDto: JoinGameQueueDto
     ): Promise<void> {
         const gameQueueId = `queue-${joinGameQueueDto.playerCount}`;
@@ -73,7 +73,7 @@ export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDiscon
     }
 
     @SubscribeMessage("join-table")
-    async joinTable(@ConnectedSocket() client: AuthenticatedSocket, tableId: string): Promise<void> {
+    async joinTable(@ConnectedSocket() client: AuthenticatedSocketDto, tableId: string): Promise<void> {
         await client.join(tableId);
 
         client.to(tableId).emit(PokerSessionEvents.PLAYER_JOINED_TABLE, { message: `Player with ID ${client.id} joined` });

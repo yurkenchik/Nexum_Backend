@@ -1,5 +1,5 @@
 import { ValueObject } from "../common-instances/value-object.instance";
-import { InvalidPasswordException } from "src/domain/exceptions/client/invalid-password.exception";
+import { InvalidPasswordException } from "src/Domain/exceptions/client/invalid-password.exception";
 import * as bcrypt from "bcrypt";
 
 export class Password extends ValueObject<string>{

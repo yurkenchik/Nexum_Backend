@@ -1,5 +1,5 @@
 import { ValueObject } from "../common-instances/value-object.instance";
-import { InvalidEmailException } from "src/domain/exceptions/client/invalid-email.exception";
+import { InvalidEmailException } from "src/Domain/exceptions/client/invalid-email.exception";
 
 export class Email extends ValueObject<string>{
     constructor(public readonly email: string) {
