@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { PokerSessionGateway } from "src/poker-session/poker-session.gateway";
-import { RedisModule } from "src/redis/redis.module";
+import { RedisModule } from "src/infrastructure/redis/redis.module";
 import { JwtModule } from "@nestjs/jwt";
 
 @Module({

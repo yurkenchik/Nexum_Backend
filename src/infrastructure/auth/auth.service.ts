@@ -3,16 +3,16 @@ import { TokenService } from "src/auth/token.service";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 import { AuthorizationResponseDto } from "src/auth/dto/authorization-response.dto";
 import { UserService } from "src/user/user.service";
-import { UserAlreadyExistsException } from "src/domain/exceptions/client/user-already-exists.exception";
-import { Password } from "src/domain/value-objects/password.vo";
-import { Email } from "src/domain/value-objects/emai.vo";
-import { PhoneNumber } from "src/domain/value-objects/phone-number.vo";
+import { UserAlreadyExistsException } from "src/domain/common/exceptions/client/user-already-exists.exception";
+import { Password } from "src/domain/common/value-objects/password.vo";
+import { Email } from "src/domain/common/value-objects/emai.vo";
+import { PhoneNumber } from "src/domain/common/value-objects/phone-number.vo";
 import { LoginDto } from "src/auth/dto/login.dto";
 import { UserDocument } from "src/user/user.model";
-import { UserNotFoundException } from "src/domain/exceptions/client/user-not-found.exception";
-import { PasswordDontMatchException } from "src/domain/exceptions/client/passwords-dont-match.exception";
+import { UserNotFoundException } from "src/domain/common/exceptions/client/user-not-found.exception";
+import { PasswordDontMatchException } from "src/domain/common/exceptions/client/passwords-dont-match.exception";
 import { ValidateUserDto } from "src/auth/dto/validate-user.dto";
-import { SnsService } from "src/aws/sns.service";
+import { SnsService } from "src/infrastructure/aws/sns.service";
 import { generateVerificationCode } from "src/system/constants/utilz-functions";
 
 @Injectable()
