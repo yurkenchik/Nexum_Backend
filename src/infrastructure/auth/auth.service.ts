@@ -1,19 +1,19 @@
 import { Injectable } from "@nestjs/common";
-import { TokenService } from "src/auth/token.service";
-import { CreateUserDto } from "src/user/dto/create-user.dto";
-import { AuthorizationResponseDto } from "src/auth/dto/authorization-response.dto";
-import { UserService } from "src/user/user.service";
+import { TokenService } from "src/infrastructure/auth/token.service";
+import { CreateUserDto } from "src/application/dto/user/create-user.dto";
+import { AuthorizationResponseDto } from "src/application/dto/auth/authorization-response.dto";
+import { UserService } from "src/infrastructure/user/user.service";
 import { UserAlreadyExistsException } from "src/domain/common/exceptions/client/user-already-exists.exception";
 import { Password } from "src/domain/common/value-objects/password.vo";
 import { Email } from "src/domain/common/value-objects/emai.vo";
 import { PhoneNumber } from "src/domain/common/value-objects/phone-number.vo";
-import { LoginDto } from "src/auth/dto/login.dto";
-import { UserDocument } from "src/user/user.model";
+import { LoginDto } from "src/application/dto/auth/login.dto";
+import { UserDocument } from "src/domain/common/entities/user.entity";
 import { UserNotFoundException } from "src/domain/common/exceptions/client/user-not-found.exception";
 import { PasswordDontMatchException } from "src/domain/common/exceptions/client/passwords-dont-match.exception";
-import { ValidateUserDto } from "src/auth/dto/validate-user.dto";
+import { ValidateUserDto } from "src/application/dto/auth/validate-user.dto";
 import { SnsService } from "src/infrastructure/aws/sns.service";
-import { generateVerificationCode } from "src/system/constants/utilz-functions";
+import { generateVerificationCode } from "src/domain/common/constants/utilz-functions";
 
 @Injectable()
 export class AuthService {

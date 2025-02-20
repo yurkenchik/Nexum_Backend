@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { SnsService } from "src/aws/sns.service";
+import { SnsService } from "src/infrastructure/aws/sns.service";
 import { ConfigModule } from "@nestjs/config";
 
 @Module({
