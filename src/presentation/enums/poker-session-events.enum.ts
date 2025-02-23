@@ -7,4 +7,6 @@ export enum PokerSessionEvents {
     GAME_QUEUE_UPDATED = "game-queue-updated",
     GAME_STARTED = "game-started",
     BET_PLACED = "bet-played",
+    DEALER_ALREADY_JOINED = "dealer-already-joined",
+    LOBBY_JOINED = "lobby-joined",
 }
