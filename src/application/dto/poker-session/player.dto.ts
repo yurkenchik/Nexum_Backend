@@ -1,12 +1,11 @@
+import { PlayingCardDocument } from 'src/domain/common/entities/playing-card.entity';
+import { PokerRole } from 'src/presentation/enums/poker-role.enum';
 
 export class PlayerDto {
-    socketId: string;
-    name: string;
-    amount: number;
+    public socketId: string;
+    public name: string;
+    public amount: number;
+    public role: PokerRole;
+    public cards: PlayingCardDocument;
 
-    constructor(socketId: string, name: string, amount = 10000) {
-        this.socketId = socketId;
-        this.name = name;
-        this.amount = amount;
-    }
 }

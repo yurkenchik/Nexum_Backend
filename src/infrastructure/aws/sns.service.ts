@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PublishCommand, PublishInput, SNSClient } from "@aws-sdk/client-sns";
 import { ConfigService } from "@nestjs/config";
-import { PublishMessageDto } from "src/aws/dto/publish-message.dto";
+import { PublishMessageDto } from "src/application/dto/aws/publish-message.dto";
 
 @Injectable()
 export class SnsService {
