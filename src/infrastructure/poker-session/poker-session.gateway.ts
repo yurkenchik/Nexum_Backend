@@ -7,7 +7,6 @@ import {
     WebSocketServer,
 } from '@nestjs/websockets';
 import { Server } from "socket.io";
-import { RedisService } from "src/infrastructure/redis/redis.service";
 import { PokerSessionEvents } from "src/presentation/enums/poker-session-events.enum";
 import { AuthenticatedSocketDto } from "src/application/dto/poker-session/authenticated-socket.dto";
 import { SOCKET_MESSAGES } from 'src/domain/common/constants/socket-messages';
@@ -23,7 +22,6 @@ export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDiscon
     private readonly server: Server;
 
     constructor(
-        private readonly redisService: RedisService,
         private readonly pokerSessionService: PokerSessionService,
         private readonly playingCardService: PlayingCardService
     ) {}
@@ -79,14 +77,5 @@ export class PokerSessionGateway implements OnGatewayConnection, OnGatewayDiscon
     }
 
     @SubscribeMessage(SOCKET_MESSAGES.PLAYER_ACTION)
-    async handlePlayerAction(@ConnectedSocket() client: AuthenticatedSocketDto): Promise<void> {
-    }
-
-    @SubscribeMessage("join-table")
-    async joinTable(@ConnectedSocket() client: AuthenticatedSocketDto, tableId: string): Promise<void> {
-        await client.join(tableId);
-
-        client.to(tableId).emit(PokerSessionEvents.PLAYER_JOINED_TABLE, { message: `Player with ID ${client.id} joined` });
-        await this.redisService.set(`player:${client.id}`, { id: client.id, tableId });
-    }
+    async handlePlayerAction(@ConnectedSocket() client: AuthenticatedSocketDto): Promise<void> {}
 }
