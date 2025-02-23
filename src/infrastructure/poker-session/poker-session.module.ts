@@ -9,9 +9,10 @@ import { GameQueue, gameQueueSchema } from 'src/domain/common/entities/game-queu
 import { PlayingCard, playingCardSchema } from 'src/domain/common/entities/playing-card.entity';
 import { GameSession, gameSessionSchema } from 'src/domain/common/entities/game-session.entity';
 import { PlayingCardModule } from 'src/infrastructure/playing-card/playin-card.module';
+import { PokerSessionService } from 'src/infrastructure/poker-session/poker-session.service';
 
 @Module({
-    providers: [PokerSessionGateway],
+    providers: [PokerSessionGateway, PokerSessionService],
     imports: [
         ConfigModule,
         RedisModule,
