@@ -10,6 +10,7 @@ import { AuthModule } from "src/infrastructure/auth/auth.module";
 import { RedisModule } from "src/infrastructure/redis/redis.module";
 import { PokerSessionModule } from "src/infrastructure/poker-session/poker-session.module";
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { DatabaseModule } from 'src/infrastructure/database/database.module';
                 uri: configService.get<string>("MONGO_DB_URI")
             })
         }),
+        EventEmitterModule.forRoot(),
         UserModule,
         AuthModule,
         RedisModule,
