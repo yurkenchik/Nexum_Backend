@@ -1,6 +1,12 @@
-import { PlayingCardDocument } from 'src/domain/common/entities/playing-card.entity';
+import { PlayingCardDto } from "src/application/dto/poker-session/playing-card.dto";
+import { PlayerDto } from "src/application/dto/poker-session/player.dto";
+import { GamePhase } from "src/presentation/enums/game-phase.enum";
 
 export class GameStateDto {
-    readonly deck: Array<PlayingCardDocument>;
-    readonly playerHands: Record<string, Array<PlayingCardDocument>>;
+    readonly players: Array<PlayerDto>;
+    readonly pot?: number = 0;
+    readonly communityCards: Array<PlayingCardDto>;
+    readonly playerHands: Record<string, Array<PlayingCardDto>>;
+    readonly currentUserTurn: string;
+    readonly gamePhase?: GamePhase = GamePhase.PRE_FLOP;
 }
