@@ -10,6 +10,7 @@ import { PlayingCard, playingCardSchema } from 'src/domain/common/entities/playi
 import { GameSession, gameSessionSchema } from 'src/domain/common/entities/game-session.entity';
 import { PlayingCardModule } from 'src/infrastructure/playing-card/playin-card.module';
 import { PokerSessionService } from 'src/infrastructure/poker-session/poker-session.service';
+import { UserModule } from 'src/infrastructure/user/user.module';
 
 @Module({
     providers: [PokerSessionGateway, PokerSessionService],
@@ -23,7 +24,8 @@ import { PokerSessionService } from 'src/infrastructure/poker-session/poker-sess
             { name: GameQueue.name, schema: gameQueueSchema },
             { name: PlayingCard.name, schema: playingCardSchema },
         ]),
-        PlayingCardModule
+        PlayingCardModule,
+        UserModule
     ],
     exports: [PokerSessionGateway],
 })
