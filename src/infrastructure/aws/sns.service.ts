@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PublishCommand, PublishInput, SNSClient } from "@aws-sdk/client-sns";
 import { ConfigService } from "@nestjs/config";
 import { PublishMessageDto } from "src/application/dto/aws/publish-message.dto";
+import { DEFAULT_AWS_REGION } from 'src/domain/common/constants/default-region';
 
 @Injectable()
 export class SnsService {
@@ -10,7 +11,7 @@ export class SnsService {
     constructor(
         private readonly configService: ConfigService
     ) {
-        const region: string = this.configService.get<string>("AWS_REGION") || "us-east-1";
+        const region: string = this.configService.get<string>("AWS_REGION") || DEFAULT_AWS_REGION;
         this.snsClient = new SNSClient({ region });
     }
 
