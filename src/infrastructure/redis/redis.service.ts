@@ -17,6 +17,7 @@ export class RedisService {
         this.redisClient = new Redis(redisUrl);
         this.publisher = new Redis(redisUrl);
         this.subscriber = new Redis(redisUrl);
+        this.redisClient.flushdb();
     }
 
     async onModuleInit(): Promise<void> {
@@ -33,13 +34,36 @@ export class RedisService {
         await this.redisClient.set(key, value);
     }
 
-    async get<T>(key: string): Promise<T> {
+    async get<T>(key: string): Promise<T | null> {
         const data = await this.redisClient.get(key);
         return data ? JSON.parse(data) : null;
     }
 
+    async getArray<T>(key: string): Promise<T | []> {
+        const data = await this.redisClient.get(key);
+        return data ? JSON.parse(data) : [];
+    }
+
     async delete(key: string): Promise<void> {
         await this.redisClient.del(key);
+    }
+
+    async sadd<T>(key: string, value: T): Promise<number> {
+        return this.redisClient.sadd(key, JSON.stringify(value));
+    }
+
+    async smembers<T>(key: string): Promise<Array<T>> {
+        const data = await this.redisClient.smembers(key);
+        return data? data.map(record => JSON.parse(record)) : [];
+    }
+
+    async srem(key: string, value: string): Promise<number> {
+        return this.redisClient.srem(key, value);
+    }
+
+    async sismember(key: string, value: string): Promise<boolean> {
+        const result = await this.redisClient.sismember(key, value);
+        return result === 1;
     }
 
     async publish<T>(channel: string, message: T): Promise<void> {
