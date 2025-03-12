@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PlayingCard, PlayingCardDocument } from 'src/domain/common/entities/playing-card.entity';
 import { Model } from 'mongoose';
 import { PlayingCardNotFoundException } from 'src/domain/common/exceptions/client/playing-card-not-found.exception';
+import { PlayingCardDto } from 'src/application/dto/poker-session/playing-card.dto';
+import { PlayerDto } from 'src/application/dto/poker-session/player.dto';
 
 @Injectable()
 export class PlayingCardService {
@@ -11,8 +13,8 @@ export class PlayingCardService {
         private readonly playingCardModel: Model<PlayingCard>,
     ) {}
 
-    async getPlayingCards(): Promise<Array<PlayingCardDocument>> {
-        const cards = await this.playingCardModel.find();
+    async getPlayingCards(): Promise<Array<PlayingCardDto>> {
+        const cards: Array<PlayingCardDto> = await this.playingCardModel.find();
         return this.shuffle(cards);
     }
 
@@ -24,7 +26,7 @@ export class PlayingCardService {
         return playingCard;
     }
 
-    async shuffle(cards: Array<PlayingCardDocument>): Promise<Array<PlayingCardDocument>> {
+    async shuffle(cards: Array<PlayingCardDto>): Promise<Array<PlayingCardDto>> {
         for (let i = cards.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [cards[i], cards[j]] = [cards[j], cards[i]];
@@ -32,25 +34,24 @@ export class PlayingCardService {
         return cards;
     }
 
-    async drawCard(): Promise<PlayingCardDocument | null> {
-        const cards = await this.getPlayingCards();
-        return cards.length > 0 ? cards.pop()! : null;
+    async drawCard(): Promise<PlayingCardDto> {
+        const cards: Array<PlayingCardDto> = await this.getPlayingCards();
+        return cards.pop()!;
     }
 
-    async drawCards(count: number): Promise<Array<PlayingCardDocument>> {
-        const drawnCards = await Promise.all(
-            Array.from({ length: count }, () => this.drawCard()),
+    async drawCards(count: number): Promise<Array<PlayingCardDto>> {
+        const drawnCards: Array<PlayingCardDto> = await Promise.all(
+            Array.from({ length: count }, (): Promise<PlayingCardDto> => this.drawCard()),
         )
-
-        return drawnCards.filter((card): card is PlayingCardDocument => card !== null);
+        return drawnCards.filter((card: PlayingCardDto): boolean => card !== null);
     }
 
-    async dealCards(playerCount: number): Promise<Record<string, Array<PlayingCardDocument>>> {
-        const deck = await this.getPlayingCards();
-        const playerHands: Record<string, Array<PlayingCardDocument>> = {};
+    async dealCards(players: Array<PlayerDto>): Promise<Record<string, Array<PlayingCardDto>>> {
+        const deck: Array<PlayingCardDto> = await this.getPlayingCards();
+        const playerHands: Record<string, Array<PlayingCardDto>> = {};
 
-        for (let i = 0; i <= playerCount; i++) {
-            playerHands[`player${i}`] = [deck.pop()!, deck.pop()!];
+        for (const player of players) {
+            playerHands[player.id] = [deck.pop()!, deck.pop()!];
         }
         return playerHands;
     }

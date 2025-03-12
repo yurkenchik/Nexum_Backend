@@ -12,15 +12,16 @@ import { UserDocument } from "src/domain/common/entities/user.entity";
 import { UserNotFoundException } from "src/domain/common/exceptions/client/user-not-found.exception";
 import { PasswordDontMatchException } from "src/domain/common/exceptions/client/passwords-dont-match.exception";
 import { ValidateUserDto } from "src/application/dto/auth/validate-user.dto";
-import { SnsService } from "src/infrastructure/aws/sns.service";
-import { generateVerificationCode } from "src/domain/common/constants/utilz-functions";
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Events } from 'src/presentation/enums/events.enum';
+import { UserCreatedEvent } from 'src/application/events/user-created.event';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly userService: UserService,
         private readonly tokenService: TokenService,
-        private readonly snsService: SnsService
+        private readonly eventEmitter: EventEmitter2
     ) {}
 
     async registration(registrationDto: CreateUserDto): Promise<AuthorizationResponseDto> {
@@ -49,8 +50,8 @@ export class AuthService {
             phoneNumber: user.phoneNumber,
             name
         });
-        await this.snsService.publishMessage({ message: `Your verification code: ${generateVerificationCode()}`, phoneNumber });
 
+        this.eventEmitter.emit(Events.USER_CREATED, new UserCreatedEvent(user));
         return { token };
     }
 
@@ -67,15 +68,10 @@ export class AuthService {
             name: user.name
         });
 
-        await this.snsService.publishMessage({
-            message: `Your verification code: ${generateVerificationCode()}`,
-            phoneNumber: user.phoneNumber
-        });
-
         return { token };
     }
 
-    async validateUser(validateUserDto: ValidateUserDto): Promise<UserDocument> {
+    private async validateUser(validateUserDto: ValidateUserDto): Promise<UserDocument> {
         const { email, password } = validateUserDto;
         const user = await this.userService.getUseByEmail(email);
         if (!user) {
@@ -90,4 +86,8 @@ export class AuthService {
         }
         return user;
     }
+
+    async confirmRegistration() {}
+
+    async confirmLogin() {}
 }

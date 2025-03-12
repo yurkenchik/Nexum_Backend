@@ -1,21 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from 'src/infrastructure/redis/redis.service';
 import { v4 as uuid } from "uuid";
-import { PUBLISH_MESSAGES } from 'src/domain/common/constants/publish-messsages';
 import { GameStateDto } from 'src/application/dto/poker-session/game-state.dto';
+import { UserService } from 'src/infrastructure/user/user.service';
+import { UserDocument } from 'src/domain/common/entities/user.entity';
+import { PlayerMapper } from 'src/application/mappers/player.mapper';
+import { PlayerDto } from 'src/application/dto/poker-session/player.dto';
 
 @Injectable()
 export class PokerSessionService {
+    private readonly logger: Logger = new Logger(PokerSessionService.name);
+
     constructor(
-        private readonly redisService: RedisService
+        private readonly redisService: RedisService,
+        private readonly userService: UserService
     ) {}
 
     async findAvailableTable(): Promise<string | null> {
-        const tables: Array<string> = await this.redisService.get<Array<string>>("active_table");
+        const tables: Array<string> = await this.redisService.smembers("active_tables") || [];
 
         for (const tableId of tables) {
-            const players = await this.getPlayersInTable(tableId);
-            if (players.length < 6) {
+            const players: Array<PlayerDto> = await this.getPlayersInTable(tableId);
+            if (players.length < 2) {
                 return tableId;
             }
         }
@@ -23,45 +29,31 @@ export class PokerSessionService {
     }
 
     async createTable(): Promise<string> {
-        const tableId = uuid();
-        const tables = await this.redisService.get<Array<string>>("active_tables") || [];
-
-        tables.push(tableId);
-        await this.redisService.set("active_tables", tables);
+        const tableId: string = uuid();
+        await this.redisService.sadd("active_tables", tableId);
         return tableId;
     }
 
-    async addPlayerToTable(tableId: string, playerId: string): Promise<void> {
-        const players = await this.getPlayersInTable(tableId);
-
-        players.push(playerId);
-        await this.redisService.set(`table:${tableId}:players`, players);
-
-        if (players.length === 6) {
-            await this.redisService.publish(PUBLISH_MESSAGES.START_GAME, { tableId });
-        }
+    async addPlayerToTable(tableId: string, user: UserDocument): Promise<void> {
+        const player: PlayerDto = PlayerMapper.toDto(user);
+        await this.redisService.sadd<PlayerDto>(`table:${tableId}:players`, player);
     }
 
-    async getPlayersInTable(tableId: string): Promise<Array<string>> {
-        return this.redisService.get<Array<string>>(`table:${tableId}:players`);
+    async getPlayersInTable(tableId: string): Promise<Array<PlayerDto> | []> {
+        return await this.redisService.smembers(`table:${tableId}:players`) || [];
     }
 
     async setGameState(tableId: string, gameStateDto: GameStateDto): Promise<void> {
-        await this.redisService.set(`table:${tableId}:game_state`, gameStateDto);
+        await this.redisService.set(`table:${tableId}:game_state`, JSON.stringify(gameStateDto));
     }
 
     async removePlayerFromTable(tableId: string, playerId: string): Promise<void> {
+        await this.redisService.srem(`table:${tableId}:players`, playerId);
+
         const players = await this.getPlayersInTable(tableId);
-        const playersWithoutRemovedPlayer = players.find(player => player !== playerId);
-
-        await this.redisService.set("active_tables", playersWithoutRemovedPlayer);
-
         if (players.length === 0) {
-            const tables = await this.redisService.get<Array<string>>("active_tables");
-            const tablesWithoutRemovedTable = tables.filter(table => table !== tableId);
-
-            await this.redisService.set("active_tables", tablesWithoutRemovedTable);
-            await this.redisService.delete(`table:${tableId}:state`);
+            await this.redisService.srem('active_tables', tableId);
+            await this.redisService.delete(`table:${tableId}:game_state`);
             await this.redisService.delete(`table:${tableId}:players`);
         }
     }

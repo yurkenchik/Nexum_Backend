@@ -27,6 +27,8 @@ export class WsAuthGuard implements CanActivate {
         const tokenPayload = jwtService.verify(token, {
             secret: configService.get<string>("JWT_SECRET"),
         });
+
+        client['user'] = tokenPayload;
         return tokenPayload;
     }
 }
