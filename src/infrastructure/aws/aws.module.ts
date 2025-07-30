@@ -1,10 +1,11 @@
 import { Module } from "@nestjs/common";
-import { SnsService } from "src/infrastructure/aws/sns.service";
+import { SnsService } from "src/infrastructure/aws/services/sns.service";
 import { ConfigModule } from "@nestjs/config";
+import { SesService } from 'src/infrastructure/aws/services/ses.service';
 
 @Module({
-    providers: [SnsService],
+    providers: [SnsService, SesService],
     imports: [ConfigModule],
-    exports: [SnsService]
+    exports: [SnsService, SesService]
 })
 export class AwsModule {}
