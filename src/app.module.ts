@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { JwtModule } from "@nestjs/jwt";
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { MongooseModule, MongooseModuleFactoryOptions } from "@nestjs/mongoose";
 import { ConsoleModule } from "nestjs-console";
 import { AppService } from "src/app.service";
 import { AppController } from "src/app.controller";
 import { UserModule } from "src/infrastructure/user/user.module";
-import { AuthModule } from "src/infrastructure/auth/auth.module";
+import { AuthorizationModule } from "src/infrastructure/authorization/authorization.module";
 import { RedisModule } from "src/infrastructure/redis/redis.module";
 import { PokerSessionModule } from "src/infrastructure/poker-session/poker-session.module";
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
-import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AccountConfigurationModule } from 'src/infrastructure/account-configuration/account-configuration.module';
 
 @Module({
     imports: [
@@ -26,13 +27,14 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
                 uri: configService.get<string>("MONGO_DB_URI")
             })
         }),
-        EventEmitterModule.forRoot(),
         UserModule,
-        AuthModule,
+        AuthorizationModule,
         RedisModule,
         PokerSessionModule,
         ConsoleModule,
-        DatabaseModule
+        DatabaseModule,
+        EventEmitterModule.forRoot(),
+        AccountConfigurationModule,
     ],
     controllers: [AppController],
     providers: [AppService],
