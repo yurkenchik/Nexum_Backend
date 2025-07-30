@@ -30,8 +30,12 @@ export class RedisService {
         await this.subscriber.quit();
     }
 
-    async set(key: string, value: any): Promise<void> {
-        await this.redisClient.set(key, value);
+    async set(key: string, value: any, ttl?: number): Promise<void> {
+        if (ttl) {
+            await this.redisClient.set(key, value, 'EX', ttl);
+        } else {
+            await this.redisClient.set(key, value);
+        }
     }
 
     async get<T>(key: string): Promise<T | null> {

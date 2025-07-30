@@ -17,6 +17,9 @@ export class User {
     @Prop({ required: true })
     public password: string;
 
+    @Prop({ default: false })
+    public isVerified: boolean;
+
     @Prop()
     public createdAt?: Date;
 
