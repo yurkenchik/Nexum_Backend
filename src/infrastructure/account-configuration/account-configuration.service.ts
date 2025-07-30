@@ -44,7 +44,7 @@ export class AccountConfigurationService {
         const user = await this.userService.getUserById(userId);
 
         const confirmationCodeKey = `confirmation:${ConfirmationCodePurpose.RESET_PASSWORD}:${user.id}`;
-        const confirmationCodeFromRedis: number = await this.redisService.get<number>(confirmationCodeKey);
+        const confirmationCodeFromRedis = await this.redisService.get<number>(confirmationCodeKey);
 
         if (confirmationCode !== confirmationCodeFromRedis) {
             throw new CodesDontMatchException();
@@ -72,7 +72,7 @@ export class AccountConfigurationService {
         const user = await this.userService.getUserById(userId);
 
         const confirmationCodeKey = `confirmation:${ConfirmationCodePurpose.CHANGE_EMAIL}:${user.id}`;
-        const confirmationCodeFromRedis: string = await this.redisService.get<string>(confirmationCodeKey);
+        const confirmationCodeFromRedis = await this.redisService.get<number>(confirmationCodeKey);
 
         const emailValueObject = new Email(newEmail);
 

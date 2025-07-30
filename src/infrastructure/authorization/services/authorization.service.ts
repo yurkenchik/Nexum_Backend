@@ -128,7 +128,7 @@ export class AuthorizationService {
     ): Promise<void> {
         const { confirmationCode, confirmationCodeKey } = validateConfirmationCodesMatchDto;
 
-        const confirmationCodeFromRedis: number = await this.redisService.get<number>(confirmationCodeKey);
+        const confirmationCodeFromRedis = await this.redisService.get<number>(confirmationCodeKey);
 
         if (confirmationCode !== confirmationCodeFromRedis) {
             throw new CodesDontMatchException();

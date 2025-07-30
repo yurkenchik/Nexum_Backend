@@ -7,11 +7,11 @@ import { ConsoleModule } from "nestjs-console";
 import { AppService } from "src/app.service";
 import { AppController } from "src/app.controller";
 import { UserModule } from "src/infrastructure/user/user.module";
-import { AuthorizationModule } from "src/infrastructure/authorization/authorization.module";
 import { RedisModule } from "src/infrastructure/redis/redis.module";
 import { PokerSessionModule } from "src/infrastructure/poker-session/poker-session.module";
 import { DatabaseModule } from 'src/infrastructure/database/database.module';
-import { AccountConfigurationModule } from 'src/infrastructure/account-configuration/account-configuration.module';
+import { AuthorizationModule } from 'src/infrastructure/authorization/authorization.module';
+import { AccountConfigurationModule } from "./infrastructure/account-configuration/account-configuration.module";
 
 @Module({
     imports: [
