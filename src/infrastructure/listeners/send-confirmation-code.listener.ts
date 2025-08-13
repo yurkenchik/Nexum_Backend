@@ -27,23 +27,23 @@ export class SendConfirmationCodeListener {
         private readonly redisService: RedisService,
     ) {}
 
-    @OnEvent(Events.UserRegistered)
-    async executeUserRegistered(event: UserRegisteredEvent): Promise<void> {
+    @OnEvent(Events.User.Registered)
+    async executeUserRegisteredEvent(event: UserRegisteredEvent): Promise<void> {
         await this.execute(event);
     }
 
-    @OnEvent(Events.UserAuthorized)
-    async executeUserAuthorized(event: UserAuthorizedEvent): Promise<void> {
+    @OnEvent(Events.User.Authorized)
+    async executeUserAuthorizedEvent(event: UserAuthorizedEvent): Promise<void> {
         await this.execute(event);
     }
 
-    @OnEvent(Events.UserRequestedPasswordReset)
-    async executeUserRequestedPasswordReset(event: UserRequestedPasswordResetEvent): Promise<void> {
+    @OnEvent(Events.User.RequestedPasswordReset)
+    async executeUserRequestedPasswordResetEvent(event: UserRequestedPasswordResetEvent): Promise<void> {
         await this.execute(event);
     }
 
-    @OnEvent(Events.UserRequestedEmailChange)
-    async executeUserRequestedEmailChange(event: UserRequestedEmailChangeEvent): Promise<void> {
+    @OnEvent(Events.User.RequestedEmailChange)
+    async executeUserRequestedEmailChangeEvent(event: UserRequestedEmailChangeEvent): Promise<void> {
         await this.execute(event);
     }
 

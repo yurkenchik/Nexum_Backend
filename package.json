@@ -19,12 +19,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "start:seed": "ts-node dist/infrastructure/database/seeds/index.js"
+    "start:seed": "NODE_ENV=development ts-node -r tsconfig-paths/register -r dotenv/config src/infrastructure/database/seeds/index.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.758.0",
     "@aws-sdk/client-ses": "^3.758.0",
     "@aws-sdk/client-sns": "^3.744.0",
+    "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
     "@nestjs/core": "^11.0.1",
@@ -38,6 +39,7 @@
     "@vendia/serverless-express": "^4.12.6",
     "aws-lambda": "^1.0.7",
     "aws-sdk": "^2.1692.0",
+    "axios": "^1.11.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

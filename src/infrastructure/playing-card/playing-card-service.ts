@@ -3,8 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { PlayingCard, PlayingCardDocument } from 'src/domain/common/entities/playing-card.entity';
 import { Model } from 'mongoose';
 import { PlayingCardNotFoundException } from 'src/domain/common/exceptions/client/playing-card-not-found.exception';
-import { PlayingCardDto } from 'src/application/dto/poker-session/playing-card.dto';
-import { PlayerDto } from 'src/application/dto/poker-session/player.dto';
+import { PlayingCardDto } from 'src/application/dto/poker-session/response/playing-card.dto';
+import { PlayerDto } from 'src/application/dto/poker-session/response/player.dto';
+import { DealCardsResponseDto } from 'src/application/dto/poker-session/response/deal-cards-response.dto';
 
 @Injectable()
 export class PlayingCardService {
@@ -46,13 +47,13 @@ export class PlayingCardService {
         return drawnCards.filter((card: PlayingCardDto): boolean => card !== null);
     }
 
-    async dealCards(players: Array<PlayerDto>): Promise<Record<string, Array<PlayingCardDto>>> {
+    async dealCards(players: Array<PlayerDto>): Promise<DealCardsResponseDto> {
         const deck: Array<PlayingCardDto> = await this.getPlayingCards();
         const playerHands: Record<string, Array<PlayingCardDto>> = {};
 
         for (const player of players) {
             playerHands[player.id] = [deck.pop()!, deck.pop()!];
         }
-        return playerHands;
+        return { playerHands, deck };
     }
 }
