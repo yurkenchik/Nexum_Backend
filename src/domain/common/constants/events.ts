@@ -1,7 +1,9 @@
 
 export const Events = {
-    UserAuthorized: 'user.authorized',
-    UserRegistered: 'user.registered',
-    UserRequestedPasswordReset: 'user.requestedPasswordReset',
-    UserRequestedEmailChange: 'user.requestedEmailChange',
+    User: {
+        Authorized: 'user.authorized',
+        Registered: 'user.registered',
+        RequestedPasswordReset: 'user.requestedPasswordReset',
+        RequestedEmailChange: 'user.requestedEmailChange',
+    },
 }

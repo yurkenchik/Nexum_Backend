@@ -15,6 +15,12 @@ export class PlayingCard {
 
     @Prop({ required: true })
     public code: string;
+
+    @Prop({ required: true })
+    public weight: number;
+
+    @Prop({ required: false })
+    public imageUrl: string;
 }
 
 export const playingCardSchema = SchemaFactory.createForClass(PlayingCard);

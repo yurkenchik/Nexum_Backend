@@ -1,5 +1,5 @@
 import { PlayingCardDocument } from 'src/domain/common/entities/playing-card.entity';
-import { PlayingCardDto } from 'src/application/dto/poker-session/playing-card.dto';
+import { PlayingCardDto } from 'src/application/dto/poker-session/response/playing-card.dto';
 
 export class PlayingCardMapper {
     static toDto(playingCardDocument: PlayingCardDocument): PlayingCardDto {

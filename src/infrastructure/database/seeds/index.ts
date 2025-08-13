@@ -1,22 +1,3 @@
-// import { Injectable, Logger } from '@nestjs/common';
-// import { PlayingCardSeeder } from 'src/infrastructure/database/seeds/seeders/playing-card.seeder';
-// import { Command } from 'nestjs-console';
-//
-// @Injectable()
-// export class SeedCommand {
-//     private readonly logger = new Logger(SeedCommand.name);
-//
-//     constructor(
-//         private readonly playingCardSeeder: PlayingCardSeeder
-//     ) {}
-//
-//     @Command({ command: "seed:cards" })
-//     async execute() {
-//         await this.playingCardSeeder.execute();
-//         this.logger.log("Playing cards seeded!");
-//     }
-// }
-
 import { AppModule } from 'src/app.module';
 import { NestFactory } from '@nestjs/core';
 import { PlayingCardSeeder } from 'src/infrastructure/database/seeds/seeders/playing-card.seeder';

@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TokenService } from "src/infrastructure/authorization/services/token.service";
 import { CreateUserDto } from "src/application/dto/user/create-user.dto";
-import { AuthorizationResponseDto } from "src/application/dto/authorization/authorization-response.dto";
 import { UserService } from "src/infrastructure/user/user.service";
 import { UserAlreadyExistsException } from "src/domain/common/exceptions/client/user-already-exists.exception";
 import { Password } from "src/domain/common/value-objects/password.vo";
@@ -53,7 +52,7 @@ export class AuthorizationService {
             password: hashedPassword,
         });
 
-        this.eventEmitter.emit(Events.UserRegistered, new UserRegisteredEvent(user, ConfirmationCodePurpose.SIGN_UP));
+        this.eventEmitter.emit(Events.User.Registered, new UserRegisteredEvent(user, ConfirmationCodePurpose.SIGN_UP));
 
         return { user, responseMessage: 'Registration was successful, waiting for confirmation' };
     }
@@ -73,7 +72,7 @@ export class AuthorizationService {
             throw new PasswordDontMatchException();
         }
 
-        this.eventEmitter.emit(Events.UserAuthorized, new UserAuthorizedEvent(user, ConfirmationCodePurpose.LOG_IN));
+        this.eventEmitter.emit(Events.User.Authorized, new UserAuthorizedEvent(user, ConfirmationCodePurpose.LOG_IN));
 
         return { user, responseMessage: 'Login was successful, waiting for confirmation' };
     }
@@ -128,7 +127,7 @@ export class AuthorizationService {
     ): Promise<void> {
         const { confirmationCode, confirmationCodeKey } = validateConfirmationCodesMatchDto;
 
-        const confirmationCodeFromRedis: number = await this.redisService.get<number>(confirmationCodeKey);
+        const confirmationCodeFromRedis = await this.redisService.get<number>(confirmationCodeKey);
 
         if (confirmationCode !== confirmationCodeFromRedis) {
             throw new CodesDontMatchException();
